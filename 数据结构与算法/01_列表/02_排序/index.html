@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>排序示例</title>
+  <script src="./bubbleSort.js"></script>
+  <script src="./quickSort.js"></script>
+</head>
+
+<body>
+  <input type="text" placeholder="输入待排序数据，请用逗号隔开" id="array" />
+  <p>
+    <button id="quickSortBtn">快速排序</button>
+    <span id="quickSortResult"></span>
+  </p>
+  <p>
+    <button id="bubbleSortBtn">冒泡排序</button>
+    <span id="bubbleSortResult"></span>
+  </p>
+  <script>
+
+    function hander(name, sortHandler) {
+      const btn = document.getElementById(`${name}Btn`);
+      btn.onclick = function () {
+        const array = document.getElementById('array').value.split(',').filter(x => x).map(x => Number(x));
+        if (array) {
+          const result = sortHandler(array);
+          document.getElementById(`${name}Result`).innerHTML = result;
+        }
+      }
+    }
+
+    hander('quickSort', quickSort);
+    hander('bubbleSort', bubbleSort)
+
+  </script>
+</body>
+
+</html>
