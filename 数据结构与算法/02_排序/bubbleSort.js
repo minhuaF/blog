@@ -10,7 +10,6 @@ function bubbleSortHandler(array) {
       }
     }
   }
-  console.warn('冒泡排序结果', array)
 }
 
 function bubbleSort(array) {
