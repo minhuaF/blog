@@ -2,7 +2,8 @@
   "name": "miwa-blog",
   "version": "0.0.2",
   "scripts": {
-    "release": "standard-version"
+    "release": "standard-version",
+    "prepare": "husky install"
   },
   "config": {},
   "devDependencies": {
