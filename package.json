@@ -2,7 +2,7 @@
   "name": "miwa-blog",
   "version": "0.0.1",
   "scripts": {
-    "start": "git-cz"
+    "commit": "git-cz"
   },
   "config": {
     "commitizen": {
