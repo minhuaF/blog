@@ -8,7 +8,3 @@ All notable changes to this project will be documented in this file. See [standa
 ### Bug Fixes
 
 * 修改test文件 ([5409d4e](https://github.com/minhuaF/blog/commit/5409d4ef1e88ef2e0f8d9d18b32803d97b2c2f3d))
-
-# Changelog
-
-All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
