@@ -1,2 +1,2 @@
-# notes
-notes for learning
+# Blog
+Notes for learning
