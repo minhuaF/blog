@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>flex 详解与实战</title>
+
+  <style>
+    * {
+      padding: 0;
+      margin: 0;
+      color: #fff;
+    }
+
+    h2 {
+      color: #000;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: row;
+      width: 500px;
+      margin: 0 auto;
+      border: 1px solid red;
+    }
+
+    .start {
+      background-color: green;
+    }
+
+    .mid {
+      background-color: blueviolet;
+      flex-grow: 1;
+      flex-shrink: 1;
+    }
+
+    .end {
+      background-color: darkgrey;
+      flex-grow: 1;
+      flex-shrink: 1;
+    }
+  </style>
+  <style>
+    .container {
+      margin-top: 100px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="start">w100 w100</div>
+    <div class="mid">w200 w200</div>
+    <div class="end">w300 w300</div>
+  </div>
+</body>
+
+</html>
