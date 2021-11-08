@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>使用Proxy完成手写响应式</title>
+</head>
+
+<body>
+
+  <!-- vue3 -->
+  <div id="app">
+    <p id="txt">{{ name }}</p>
+    <p>{{ age }}</p>
+    <input type="text" v-model="name" id="el" />
+  </div>
+
+  <script src="./proxy.js"></script>
+  <script>
+    const vm = new Reactive({
+      // 挂载元素
+      el: '#app',
+      data: {
+        name: 'miwa',
+        age: 18
+      }
+    })
+  </script>
+
+  <!-- vue2 -->
+  <div id="app">
+    <p id="txt"></p>
+    <input type="text" v-model="name" id="el" />
+  </div>
+
+  <script>
+    // vue2 中双向数据绑定的实现
+    let data = {};
+    data.name = 123
+    const txt = document.querySelector('#txt');
+    const el = document.querySelector('#el');
+
+    // 数据更新到视图：在对data的属性进行操作时更新视图数据
+    // 第一个参数：要定义属性的对象
+    // 第二个参数：要定义或修改的属性的名称
+    // 第三个参数：要定义或修改的属性描述符
+    Object.defineProperty(data, 'name', {
+      set: function (newValue) {
+        txt.innerHTML = newValue;
+      }
+    })
+
+    // 视图更新到数据
+    el.addEventListener('input', e => {
+      data.name = e.target.value
+    })
+
+  </script>
+
+  <h3>总结</h3>
+  <ul>
+    <li>Object.defineProperty 只能劫持对象的属性，而Proxy是直接代理对象；</li>
+    <li>Object.defineProperty对新增属性需要手动进行Observe；</li>
+  </ul>
+</body>
+
+</html>
