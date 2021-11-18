@@ -1,85 +1,80 @@
-
 /**
  * 参考：https://juejin.cn/post/6875247528565014535
  */
 class Reactive extends EventTarget{
+  // 由于需要自定义事件，所以需要继承EventTarget
+
   constructor(options) {
     super();
-    this.options = options;
+    this.$data = options.data;
+    this.$el = document.querySelector(options.el);
 
-    this.$data = this.options.data;
-
-    this.el = document.querySelector(this.options.el);
-
-    this.compile(this.el);
-
-    this.observe(this.$data)
+    this.compile(this.$el);
+    this.observer(this.$data)
   }
 
-  observe(data) {
-    // 备份this?
+  // 观察数据变化，通知到视图
+  observer(data) {
     let _this = this;
 
     this.$data = new Proxy(data, {
-      // 设置数据时，通知视图要更新
       set(target, prop, value) {
-        // 创建一个自定义事件，初始化时创建数据
-        // 第一个参数 事件的类型名称
-        // detail: 当事件初始化时传递的数据
         let event = new CustomEvent(prop, {
           detail: value
         })
-        // 派发事件
+
         _this.dispatchEvent(event);
-        // 保持原来的set操作: Reflect.set 方法允许你在对象上设置属性
         return Reflect.set(...arguments);
       }
     })
   }
 
+  // 组合视图与数据
   compile(el) {
-    // 遍历找到替换符，对data进行替换
+    // 1. 找到有绑定 v-model 的input
+    // 2. 监测input改变，更新到data
 
-    let child = el.childNodes;
+    const nodes = el.childNodes;
 
-    [...child].forEach(node => {
-      // 如果node类型是Text_node
+    [...nodes].forEach(node => {
+      // 是文本
       if(node.nodeType === 3) {
-        // 拿到文本内容，替换data
-        let txt = node.textContent;
+        const txt = node.textContent;
+        const reg = 'reg'; // 匹配标识符的正则表达式
 
-        // 正则
-        let reg = /\{\{\s*([^\s\{\}]+)\s*\}\}/g;
         if(reg.test(txt)) {
-          let $1 = RegExp.$1;
+          const $1 = RegExp.$1; // 属性名
+
           if(this.$data[$1]) {
-            node.textContent = txt.replace(reg, this.$data[$1])
+            node.textContent = txt.replace(reg, this.$data[$1]);
           }
-          // 绑定自定义事件
-          // 接收数据的事件，更新到视图
+
+          // 给每个属性注册当前属性需要监听的自定义事件
           this.addEventListener($1, e => {
-            // 替换成传进来的detail
             node.textContent = txt.replace(reg, e.detail);
           })
+          
         }
-        // 如果 node的类型是ELEMENT_NODE
       } else if(node.nodeType === 1){
-        const attr = node.attributes;
+        const attrs = node.attributes;
+        // 找到有绑定数据的视图节点
+        if(attrs.hasOwnProperty('v-model')) {
+          const key = attrs['v-model'].nodeValue;
 
-        if(attr.hasOwnProperty('v-model')) {
-          const keyName = attr['v-model'].nodeValue;
+          node.value = this.$data[key];
 
-          node.value = this.$data[keyName];
-
-          // 视图要更新时，通知数据要更新
-          node.addEventListener('input', e => {
-            this.$data[keyName] = node.value
+          // dom 改变时需要同步到数据
+          node.addEventListener('input', (e) => {
+            this.$data[key] = e.target.value;
           })
         }
 
-        // 递归执行
-        this.compile(node);
+        // 不是文本的情况需要递归;
+        this.compile(node)
       }
     })
   }
 }
+
+// data 怎么通知 view 更新 >>> 订阅观察者模式(自定义事件)
+// view 怎么通知 data 更新 >>> 原生’input‘事件
