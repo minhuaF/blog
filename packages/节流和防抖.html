@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>节流和防抖</title>
+</head>
+
+<body>
+  <div>
+    <p>节流</p>
+    <p>
+      <label>输入</label>
+      <input type="text" name="search" id="InputThrottle" />
+    </p>
+  </div>
+  <script>
+    // 节流
+    // 是什么？控制时间间隔内，函数的连续调用只有一个调用生效。
+    // ** 节流和防抖都是为了避免代码大量地连续执行，进而达到一定的性能优化效果。**
+    // 实现原理：函数触发时设定倒计时，在倒计时结束前函数没有重新被触发，则执行函数，如果函数重新被触发，那倒计时重新计算。
+  </script>
+
+  <script>
+
+    // 参考 lodash 中的节流函数实现
+    function throttle4(func, wait) {
+      let timerId;
+      return function (...args) {
+        // 需要_this = this 的原因：
+        // 1. this是在方法执行的时候自动赋值的变量。它的值与方法调用方式有很大的关系。
+        // 2. 在setTimeout中的this，默认都是指向wndow，因为setTimeout创建的是一个宏任务，宏任务由环境调用，所以指向的是window；
+        // 3. 确保func中的this的指向的正确性，需要对_this进行绑定修改；
+        let _this = this;
+        clearTimeout(timerId);
+        timerId = setTimeout(() => {
+          func.apply(_this, args);
+        }, wait)
+      }
+    }
+
+    // 优化
+    // throttle4 中如果每次函数触发都在wait时间内，那函数的触发会很久，需要优化，避免代码一直没有被执行；
+    // 实现：定义一个时间间隔，超过wait时间，则执行代码
+    function throttle5(func, wait) {
+      let deferTime = 0, 
+          lastTime = 0; // 上一次的执行时间
+      
+      return function(...args) {
+        const _this = this;
+        let currentTime = Date.now();
+
+        // 第一次或者时间过了最长时间后更新
+        if(!lastTime || (currentTime >= wait + lastTime)) {
+          lastTime = currentTime; // 更新上一次的时间
+          func.apply(_this, args);
+        } else {
+          clearTimeout(deferTime);
+          deferTime = setTimeout(() => {
+            lastTime = currentTime; // 更新上一次的时间
+            func.apply(_this, args);
+          }, wait)
+        }
+      }
+    }
+
+    let searchDebounce = throttle4(function(query) {
+      console.log(`Results for "${query}"`);
+    }, 500);
+
+    document.getElementById("InputThrottle").addEventListener("input", (event) => {
+      searchDebounce(event.target.value);
+    });
+
+  </script>
+
+  <script>
+    // 防抖
+  </script>
+</body>
+
+</html>
